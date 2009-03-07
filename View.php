@@ -23,12 +23,12 @@ class Plank_View {
 		$file = '/'.$templateDir.'/'.$template.'.template.php';
 		if (file_exists($dir.$file)){
 			return $dir.$file;
-		} elseif (file_exists(CODE_PATH.'/Plank/templates'.$file)){
+		} elseif (file_exists(PLANK_PATH.'/Plank/templates'.$file)){
 			
-			if (!is_readable(CODE_PATH.'/Plank/templates'.$file)){
+			if (!is_readable(PLANK_PATH.'/Plank/templates'.$file)){
 				throw new Plank_Exception_View('View '.$templateDir.'/'.$template.' is not readable by me.');
 			} else {
-				return CODE_PATH.'/Plank/templates'.$file;
+				return PLANK_PATH.'/Plank/templates'.$file;
 			}
 		} else {
 			Plank_Logger::log('View', "View not found ".$dir.$file, L_FATAL);
