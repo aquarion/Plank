@@ -48,6 +48,8 @@ class Plank_DB {
     				$this->connections[$connection]->setOption('log_line_break', "<br/>");
     			}
     			
+    			$this->connections[$connection]->setOption('portability', MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE);
+    			
     			$this->connections[$connection]->setFetchMode('MDB2_FETCHMODE_ASSOC');
 	    		
 	    		if(PEAR::isError($this->connections[$connection])){

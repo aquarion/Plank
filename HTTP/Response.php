@@ -38,6 +38,7 @@ class Plank_HTTP_Response {
 	public function setcookie($name, $value, $expire = 0, $path = '/' , $domain = false , $secure=false, $httponly=false){
 		$expire = strtotime($expire);
 		$this->cookies[$name] = array($name, $value, $expire, $path, $domain, $secure, $httponly);
+		Plank_Logger::log('Response', 'Setting cookie '.$name.' to '.$value, L_TRACE);
 	}
 	
 	public function setstatus($code){

@@ -42,7 +42,7 @@ class Plank_Logger_Output {
     		}
     		$this->log[] = array(microtime(true), $area, $message, $level);
     		
-    		error_log(sprintf($this->strf(), microtime(true)-T, $level, $area, $message));
+    		//error_log(sprintf($this->strf(), microtime(true)-T, $level, $area, $message));
     		
 		}
     }

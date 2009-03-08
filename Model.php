@@ -28,6 +28,7 @@ abstract class Plank_Model{
 	}
 	
 	function __destruct(){
+		Plank_Logger::log('MDL'.$this->_dbTable, 'Doing destruct save', L_TRACE);
 		$this->_save();
 	}
 

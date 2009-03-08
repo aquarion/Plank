@@ -18,7 +18,7 @@ class Plank_HTTP_Request {
 	function __construct(){
 		
 		
-        Plank_Logger::log('Request', 'Init Request with '.count($_COOKIE).' cookies', L_TRACE);
+      Plank_Logger::log('Request', 'Init Request with '.count($_COOKIE).' cookies', L_TRACE);
 		
 		$this->post             = (object)$_POST;
 		$this->get              = (object)$_GET;

@@ -14,7 +14,7 @@ class Plank_Autoload {
 		$found = Plank_Autoload::findClass($class_name);
 		
 		if ($found){
-			defined('INIT') ? Plank_Logger::log('Autoloader', 'Found '.$found, L_TRACE) : false;
+			//defined('INIT') ? Plank_Logger::log('Autoloader', 'Found '.$found, L_TRACE) : false;
 			require($found);
 			return true;
 		} else {
@@ -51,7 +51,7 @@ class Plank_Autoload {
 		$filename = implode('/',explode('_',$class_name)).'.php';
 		foreach($searchpath as $path){
 			$path .= '/';
-			defined('INIT') ? Plank_Logger::log('Autoloader', 'Looking for '.$path.$filename, L_TRACE) : false;
+			//defined('INIT') ? Plank_Logger::log('Autoloader', 'Looking for '.$path.$filename, L_TRACE) : false;
 			if (file_exists($path.$filename)){
 				return $path.$filename;
 			}
