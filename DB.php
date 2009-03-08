@@ -47,6 +47,8 @@ class Plank_DB {
     				$this->connections[$connection]->setOption('debug', 1);
     				$this->connections[$connection]->setOption('log_line_break', "<br/>");
     			}
+    			
+    			$this->connections[$connection]->setFetchMode('MDB2_FETCHMODE_ASSOC');
 	    		
 	    		if(PEAR::isError($this->connections[$connection])){
 	    			throw new Plank_Exception_Database_Connection('Error connecting '.$connection.': '.$this->connections[$connection]->getMessage().' '.$this->connections[$connection]->getUserInfo());

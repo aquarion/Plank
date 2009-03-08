@@ -34,6 +34,8 @@ class Plank_Logger_Output {
     
     public function logLine($area, $message, $level){    
     	
+    	error_log(sprintf($this->strf(), microtime(true)-T, $level, $area, $message));
+    		
     	if ($level < $this->errorlevel){
     		if (strlen($area) > $this->areamax){
     			$this->areamax = strlen($area);

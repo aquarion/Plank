@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 class Plank_Logger {
 	
 	static function log($area, $message, $level){
-		if(!defined('SHOWDEBUG')){return;}
+		if(!defined('SHOWDEBUG')){return;}	
 		$log = Plank_Logger_Output::getInstance();
 		
 		$log->logLine($area, $message, $level);		

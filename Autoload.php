@@ -3,8 +3,10 @@
 class Plank_Autoload {
 
 	static function loadClass($class_name){
+		
+		
 		if (defined('INIT')){	
-			Plank_Logger::log('Autoloader', 'Loading class '.$class_name, L_INFO);
+			Plank_Logger::log('Autoloader', 'Loading class '.$class_name, L_TRACE);
 		}
 		
 		error_log('Loading '.$class_name);
@@ -18,6 +20,11 @@ class Plank_Autoload {
 		} else {
 			error_log('CRITICAL ERROR LOADING '.$class_name);
 			global $response;
+			
+			if (defined('DESTRUCT')){
+				return;
+			}
+			
 			Plank_Error::Error503('Code Error: Fatal Error Loading '.$class_name, $response);
 			$response->respond();
 		}

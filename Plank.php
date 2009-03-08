@@ -73,7 +73,7 @@ try {
 } catch ( Plank_Exception_NotFound $e ){
 	Plank_Error::Error404($e->getMessage(), $response);	
 } catch ( Exception $e ){
-	Plank_Error::Error503($e->getMessage(), $response);	
+	Plank_Error::Error503($e, $response);	
 }
 
 
@@ -83,3 +83,5 @@ $response->respond();
 Plank_Logger::logStat('Init', 'Goodbye, Cruel World');
 
 echo Plank_Logger_Display::display();
+
+define('DESTRUCT', true);
