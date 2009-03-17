@@ -20,7 +20,7 @@ class Plank_Error {
 	function defaultError($status, $message, $response){
 		$trace = debug_backtrace();
 		
-		if(is_subclass_of($message, 'Exception')){
+		if(is_object($message) && is_subclass_of($message, 'Exception')){
 			$trace = $message->getTrace();
 			$message = $message->getMessage();
 		}
@@ -28,8 +28,7 @@ class Plank_Error {
 		if(defined('DESTRUCT')){
 			die($message);
 		}
-		
-		error_log('Hi there');
+	
 		
 		$view = new Plank_View('Errors', 'Error503');
 		
@@ -48,7 +47,7 @@ class Plank_Error {
 		$response->respond();
 		
 		echo Plank_Logger_Display::display();
-		die();
+		die('');
 		
 	}
 	
@@ -57,7 +56,7 @@ class Plank_Error {
 		if (is_null($trace)){
 			$trace = debug_backtrace();
 		}
-		$trace = array_slice($trace, 1);
+		#$trace = array_slice($trace, 1);
 		
 		$output = '
 		<table>

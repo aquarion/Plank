@@ -22,6 +22,12 @@ abstract class Plank_Model{
 			throw new Plank_Exception_Model('Model DB Table Undefined');
 		}
 		
+		if (is_array($Id)){
+		Plank_Logger::log('MDL'.$this->_dbTable, 'Populate from Array '.print_r($Id,1), L_INFO);
+			$this->_populateFromArray($Id);
+			return;
+		}
+		
 		if (!is_null($Id)){
 			$this->_load($Id);
 		}
@@ -94,17 +100,16 @@ abstract class Plank_Model{
 		
 	}
 	
-	function _save(){
+	function _save($force = false){
 		
-		if (!$this->changed){
+		if (!$this->changed && !$force){
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No change ', L_DEBUG);
 			return;
-		} elseif (!$this->data){
+		} elseif (!$this->data && !$force){
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No data here ', L_DEBUG);
 			return;
 		}
-		
-		
+				
 		// Initialise database connection		
 		$db = Plank_DB::getInstance();
 		$cxn = $db->connection('master');
@@ -172,7 +177,8 @@ abstract class Plank_Model{
 			return $this->data[$value];
 		}
 		
-		throw new Plank_Exception($value.' is not a '.get_class($this).' attribute');
+		
+		throw new Plank_Exception($value.' is not a '.get_class($this).' attribute, and cannot be got');
 	}
 	
 	
@@ -191,9 +197,39 @@ abstract class Plank_Model{
 			return true;
 		}
 		
-		throw new Plank_Exception($value.' is not a '.get_class($this).' attribute');
+		throw new Plank_Exception($value.' is not a '.get_class($this).' attribute and cannot be set');
 	}
 	
 	abstract function _init();
+	
+	
+	function _populateFromArray($array){
+		foreach($array as $index => $value){
+			$this->data[$index] = $value;
+		}
+	}
+	
+	// This should provide a straight list of objects as a recordset for use
+	// by the Collection object.
+	function _collection_list($field, $limit, $start = 0, $direction = 'DESC'){
+	
+		$sql = sprintf('select * from %s order by %s %s limit %d, %d', $this->_dbTable, $field, $direction, $start, $limit);
+		// Initialise database connection		
+		$db = Plank_DB::getInstance();
+		$cxn = $db->connection('master');
+		
+		$query = $cxn->prepare($sql);
+		
+		$result = $query->execute();
+		
+		if (PEAR::isError($result)) {
+			Plank_Logger::log('MDL'.$this->_dbTable, 'DB Error! '.$result->getMessage().' '.$result->getUserInfo(), L_FATAL);
+		   	throw new Plank_Exception_Database('Query failed: '.$result->getMessage().'\n\n'.$result->getUserInfo());
+		}
+		
+		return $result->fetchAll();
+		
+	
+	}
 	
 } 

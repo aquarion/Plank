@@ -53,7 +53,11 @@ class Plank_View {
 		
 	}
 	
-	function partial($templateDir, $template, $as_string = false){
+	function partial($templateDir, $template, $data = array(), $as_string = false){
+		
+		foreach($data as $index=>$value){
+			$this->$index = $value;
+		}
 		
 		$file = $this->findFile($templateDir, $template);
 		if ($as_string){

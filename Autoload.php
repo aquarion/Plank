@@ -18,12 +18,13 @@ class Plank_Autoload {
 			require($found);
 			return true;
 		} else {
-			error_log('CRITICAL ERROR LOADING '.$class_name);
+			error_log('Couldn\'t Load Class "'.$class_name.'"');
 			global $response;
 			
 			if (defined('DESTRUCT')){
 				return;
 			}
+			
 			
 			Plank_Error::Error503('Code Error: Fatal Error Loading '.$class_name, $response);
 			$response->respond();
@@ -51,7 +52,7 @@ class Plank_Autoload {
 		$filename = implode('/',explode('_',$class_name)).'.php';
 		foreach($searchpath as $path){
 			$path .= '/';
-			//defined('INIT') ? Plank_Logger::log('Autoloader', 'Looking for '.$path.$filename, L_TRACE) : false;
+			defined('INIT') ? Plank_Logger::log('Autoloader', 'Looking for '.$path.$filename, L_TRACE) : false;
 			if (file_exists($path.$filename)){
 				return $path.$filename;
 			}

@@ -49,7 +49,7 @@ class Plank_Config {
 		if (isset($this->data[$area])){
 			return $this->data[$area];
 		}		
-		Plank_Logger::log('Config', "Couldn't get $area", L_DEBUG);
+		Plank_Logger::log('Config', "Couldn't get $area", L_TRACE);
 		return false;
 	}
 	

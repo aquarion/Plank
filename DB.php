@@ -40,7 +40,7 @@ class Plank_DB {
         $connections = explode(',',$config['connections']);
         
     	foreach($connections as $connection){
-    		if (isset($config['dsn_'.$connection])){    			
+    		if (isset($config['dsn_'.$connection])){    
     			$this->connections[$connection] = MDB2::factory($config['dsn_'.$connection]);
     			
     			if (SHOWDEBUG){
@@ -50,14 +50,14 @@ class Plank_DB {
     			
     			$this->connections[$connection]->setOption('portability', MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE);
     			
-    			$this->connections[$connection]->setFetchMode('MDB2_FETCHMODE_ASSOC');
+    			$this->connections[$connection]->setFetchMode(MDB2_FETCHMODE_ASSOC);
 	    		
 	    		if(PEAR::isError($this->connections[$connection])){
 	    			throw new Plank_Exception_Database_Connection('Error connecting '.$connection.': '.$this->connections[$connection]->getMessage().' '.$this->connections[$connection]->getUserInfo());
 	    		}
-			} else {
-				throw new Plank_Exception_Database_Config('No DSN for DB Connection '.$connection);
-			}
+		} else {
+			throw new Plank_Exception_Database_Config('No DSN for DB Connection '.$connection);
+		}
     	}
         
         

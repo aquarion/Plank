@@ -34,6 +34,13 @@ class Plank_HTTP_Request {
 		$this->client_ip        = $_SERVER['REMOTE_ADDR'];
 		
 		$this->uri              = $_SERVER['REQUEST_URI'];
+		
+		foreach((array) $this->post as $index => $value){
+			$this->post->$index = stripslashes($value);
+		}
+		foreach((array) $this->get as $index => $value){
+			$this->get->$index = stripslashes($value);
+		}
 
 		
 	}	

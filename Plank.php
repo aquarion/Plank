@@ -82,6 +82,8 @@ $response->respond();
 
 Plank_Logger::logStat('Init', 'Goodbye, Cruel World');
 
+Plank_Logger::log('Init', 'Memory Use: '.number_format(memory_get_usage()), L_INFO);
+
 echo Plank_Logger_Display::display();
 
 define('DESTRUCT', true);
