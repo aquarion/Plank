@@ -23,7 +23,7 @@ abstract class Plank_Model{
 		}
 		
 		if (is_array($Id)){
-		Plank_Logger::log('MDL'.$this->_dbTable, 'Populate from Array '.print_r($Id,1), L_INFO);
+			Plank_Logger::log('MDL'.$this->_dbTable, 'Populate from Array', L_TRACE);
 			$this->_populateFromArray($Id);
 			return;
 		}
@@ -34,24 +34,27 @@ abstract class Plank_Model{
 	}
 	
 	function __destruct(){
-		Plank_Logger::log('MDL'.$this->_dbTable, 'Doing destruct save', L_TRACE);
+		//Plank_Logger::log('MDL'.$this->_dbTable, 'Doing destruct save', L_TRACE);
 		$this->_save();
 	}
 
 	// Load a unique data object from the database
-	function _load($id, $secondaryId = null){
+	function _load($id, $column = null, $secondaryId = null){
 		
 		Plank_Logger::log('MDL'.$this->_dbTable, 'Loading data from ID '.$id, L_TRACE);
 		
 		// If the ID is numeric it's probably the primary id.
-		if (is_numeric($id)){
+		
+		if (!is_null($column)){
+			$uniqueColumn = $column;
+		} elseif (is_numeric($id)){
 			$uniqueColumn = $this->_dbNumId;
 		} elseif (!is_null($id)){
 			$uniqueColumn = $this->_dbStrId;
 		} else {
 			throw new Plank_Exception('Cannot load thing with ID of '.$id);
 		}
-		
+				
 		// Initialise database connection		
 		$db = Plank_DB::getInstance();
 		$cxn = $db->connection($this->_masterOrSlave());
@@ -90,6 +93,10 @@ abstract class Plank_Model{
 		}
 		
 		$row = $result->fetchRow();
+		
+		if(!$row){
+			throw new Plank_Exception_Database_Notfound('Didn\'t have anything with that ID');
+		}
 		$this->_dbOrigData = $this->data = $row;
 		
 		
@@ -103,10 +110,10 @@ abstract class Plank_Model{
 	function _save($force = false){
 		
 		if (!$this->changed && !$force){
-			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No change ', L_DEBUG);
+			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No change ', L_TRACE);
 			return;
 		} elseif (!$this->data && !$force){
-			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No data here ', L_DEBUG);
+			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No data here ', L_TRACE);
 			return;
 		}
 
@@ -125,9 +132,7 @@ abstract class Plank_Model{
 		
 		
 		// Once you have a valid MDB2 object named $mdb2...
-		
-		print_r( $this->data);
-		
+				
 		$fields_values = array();
 		$fields = explode(',', $this->_dbSaveFields);
 		foreach($fields as $field){
@@ -184,7 +189,7 @@ abstract class Plank_Model{
 			$this->_init();
 		}
 		
-		if(isset($this->data[$value])){
+		if(array_key_exists($value, $this->data)) {
 			return $this->data[$value];
 		}
 		
@@ -198,7 +203,10 @@ abstract class Plank_Model{
 			$this->_init();
 		}
 		
-		if(isset($this->data[$property])){
+		
+		
+		if(array_key_exists($property, $this->data)) {
+			Plank_Logger::log('MDL'.$this->_dbTable, "Set $property to $value", L_DEBUG);
 			$validationFunction = 'validate'.ucwords($property);
 			if(method_exists($this, $validationFunction)){
 				$this->$validationFunction($value);
@@ -207,8 +215,8 @@ abstract class Plank_Model{
 			$this->changed = true;
 			return true;
 		}
-		
-		throw new Plank_Exception($value.' is not a '.get_class($this).' attribute and cannot be set');
+				
+		throw new Plank_Exception($property.' is not a '.get_class($this).' attribute and cannot be set');
 	}
 	
 	abstract function _init();
