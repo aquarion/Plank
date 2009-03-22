@@ -23,6 +23,19 @@ class Plank_Collection {
 		return $this->collection;
 	}
 	
+	static function find($type, $field, $value, $op = '=', $sort = null, $limit= null){
+	
+		$obj = new $type();
+	
+		$array = $obj->_collection_find($field, $value, $op, $sort, $limit );
+		
+		$collection = array();
+		foreach($array as $element){
+			$collection[] = new $type($element);
+		}
+				
+		return new Plank_Collection($collection);
+	}
 
 }
 

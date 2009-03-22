@@ -89,7 +89,7 @@ abstract class Plank_Model{
 		   throw new Plank_Exception_Database('Database failed: '.$result->getMessage().'\n\n'.$result->getUserInfo());
 		}
 		
-		$row = $result->fetchRow(MDB2_FETCHMODE_ASSOC);
+		$row = $result->fetchRow();
 		$this->_dbOrigData = $this->data = $row;
 		
 		
@@ -109,13 +109,24 @@ abstract class Plank_Model{
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Not saving data, No data here ', L_DEBUG);
 			return;
 		}
-				
+
+
+		// Check everything's valid
+		foreach($this->data as $property => $value){
+			$validationFunction = 'validate'.ucwords($property);
+			if(method_exists($this, $validationFunction)){
+				$this->$validationFunction($value);
+			}
+		}
+	
 		// Initialise database connection		
 		$db = Plank_DB::getInstance();
 		$cxn = $db->connection('master');
 		
 		
 		// Once you have a valid MDB2 object named $mdb2...
+		
+		print_r( $this->data);
 		
 		$fields_values = array();
 		$fields = explode(',', $this->_dbSaveFields);
@@ -140,9 +151,9 @@ abstract class Plank_Model{
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Updating record '.$this->data[$this->_dbNumId], L_DEBUG);
 			$result = $cxn->extended->autoExecute($this->_dbTable, 
 				$fields_values,
-                MDB2_AUTOQUERY_UPDATE,
-                $this->_dbNumId.' = '.$cxn->quote($this->data[$this->_dbNumId], 'integer'),
-                $types);
+				MDB2_AUTOQUERY_UPDATE,
+				$this->_dbNumId.' = '.$cxn->quote($this->data[$this->_dbNumId], 'integer'),
+				$types);
 		}
                         
 		if (PEAR::isError($result)) {
@@ -216,7 +227,7 @@ abstract class Plank_Model{
 		$sql = sprintf('select * from %s order by %s %s limit %d, %d', $this->_dbTable, $field, $direction, $start, $limit);
 		// Initialise database connection		
 		$db = Plank_DB::getInstance();
-		$cxn = $db->connection('master');
+		$cxn = $db->connection('slave');
 		
 		$query = $cxn->prepare($sql);
 		
@@ -226,6 +237,41 @@ abstract class Plank_Model{
 			Plank_Logger::log('MDL'.$this->_dbTable, 'DB Error! '.$result->getMessage().' '.$result->getUserInfo(), L_FATAL);
 		   	throw new Plank_Exception_Database('Query failed: '.$result->getMessage().'\n\n'.$result->getUserInfo());
 		}
+		
+		return $result->fetchAll();
+	}
+	
+	
+	// This should provide a straight list of objects as a recordset for use
+	// by the Collection object.
+	function _collection_find($field, $value, $op = '=', $sort = null, $limit= null, $start = 0, $direction = 'DESC'){
+		
+		Plank_Logger::log('MDL'.$this->_dbTable, "Finding items with a $field $op $value", L_DEBUG);
+	
+		$sql = sprintf('select * from %s where %s %s :value', 
+			$this->_dbTable, // select from pirate
+			$field, // where name
+			$op //  ==
+			);
+		
+		if ( !is_null($sort) ){
+			$sql .= sprintf(' order by %s %s', $sort, $direction); 
+		}
+		
+		if ( !is_null($limit)){
+			sprintf(' limit %d, %d', $start, $limit);
+		}
+		
+		
+		// Initialise database connection		
+		$db = Plank_DB::getInstance();
+		$cxn = $db->connection('slave');
+		
+		$query = $cxn->prepare($sql, MDB2_PREPARE_MANIP);
+		$db->checkError($query);
+		
+		$result = $query->execute(array('value' => $value));
+		$db->checkError($result);
 		
 		return $result->fetchAll();
 		

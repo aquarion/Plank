@@ -16,6 +16,13 @@ class Plank_DB {
         return self::$_instance;
     }
     
+    function checkerror($result){
+    
+		if (PEAR::isError($result)) {
+			Plank_Logger::log('DB', 'DB Error! '.$result->getMessage().' '.$result->getUserInfo(), L_FATAL);
+		   throw new Plank_Exception_Database('Database failed: '.$result->getMessage());
+		}
+    }
     
     static function hasInstance(){
         if(empty(self::$_instance)) {

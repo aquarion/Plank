@@ -72,7 +72,7 @@ class Plank_Error {
 			//$file = str_replace(getcwd(), 'CWD', $t['file']);
 			$file = str_replace(realpath(CODE_PATH), '[APP]', $t['file']);
 			
-			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, var_export($t['args'],1));
+			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, print_r($t['args'],1));
 			
 		}
 		
