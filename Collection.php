@@ -25,7 +25,6 @@ class Plank_Collection  implements Iterator {
 	static function getLastTen($type, $field){
 		
 		$obj = new $type();
-		$this->type = $type;
 		
 		
 		$collection =  new Plank_Collection($obj->_collection_list($field, 10 ) );

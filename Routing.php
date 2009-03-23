@@ -16,8 +16,8 @@ class Plank_Routing {
 			list($uri, $query) = explode('?', $uri);
 		}
 		
-		$path = explode('/',$uri);
-		
+		$path = explode('/',rtrim($uri));
+				
 		if (isset($path[0]) && empty($path[0])){
 			array_pop($path);
 		}
@@ -41,6 +41,9 @@ class Plank_Routing {
 				break;
 			
 			default:
+				if (empty($path[1])){
+					$path[1] = 'Index';
+				}
 				Plank_Logger::log('Routing', 'Routing to controller '.$path[0].' method '.$path[1], L_INFO);
 				$this->controller = $path[0];
 				$this->action     = $path[1];
