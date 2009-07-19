@@ -57,6 +57,14 @@ $request  = new Plank_HTTP_Request();
 $response = new Plank_HTTP_Response();
 
 
+function handle_exceptions($e){
+	global $response;
+	Plank_Error::Error503($e, $response);
+}
+
+set_exception_handler("handle_exceptions");
+
+
 try {	
 	
 	Plank_Logger::log('Init', 'Hello World', L_INFO);
@@ -72,8 +80,8 @@ try {
 	
 } catch ( Plank_Exception_NotFound $e ){
 	Plank_Error::Error404($e->getMessage(), $response);	
-} catch ( Exception $e ){
-	Plank_Error::Error503($e, $response);	
+#} catch ( Exception $e ){
+#	Plank_Error::Error503($e, $response);	
 }
 
 

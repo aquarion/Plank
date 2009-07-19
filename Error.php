@@ -47,7 +47,6 @@ class Plank_Error {
 		$response->respond();
 		
 		echo Plank_Logger_Display::display();
-		die('');
 		
 	}
 	

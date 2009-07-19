@@ -23,17 +23,17 @@ class Plank_HTTP_Request {
 		$this->post             = (object)$_POST;
 		$this->get              = (object)$_GET;
 		$this->cookies          = (object)$_COOKIE;
-		$this->user_agent       = $_SERVER['HTTP_USER_AGENT'];
+		$this->user_agent       = @$_SERVER['HTTP_USER_AGENT'];
 		$this->accept_content   = explode(',', $_SERVER['HTTP_ACCEPT']);
 		$this->accept_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 		$this->accept_charset   = explode(',', $_SERVER['HTTP_ACCEPT_CHARSET']);
 		
-		$this->keep_alive       = $_SERVER['HTTP_KEEP_ALIVE'];
-		$this->connection       = $_SERVER['HTTP_CONNECTION'];
+		$this->keep_alive       = @$_SERVER['HTTP_KEEP_ALIVE'];
+		$this->connection       = @$_SERVER['HTTP_CONNECTION'];
 		
-		$this->client_ip        = $_SERVER['REMOTE_ADDR'];
+		$this->client_ip        = @$_SERVER['REMOTE_ADDR'];
 		
-		$this->uri              = $_SERVER['REQUEST_URI'];
+		$this->uri              = @$_SERVER['REQUEST_URI'];
 		
 		foreach((array) $this->post as $index => $value){
 			$this->post->$index = stripslashes($value);

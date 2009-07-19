@@ -32,6 +32,8 @@ class Plank_Config {
 	 			throw new Plank_Exception_ConfigError('Config File isn\'t readable');
 	 		}
 		} else {
+			header("HTTP/1.0 503 Service Unavailable");
+			die('Could not find config file.');		
 			throw new Plank_Exception_ConfigError('Where\'s my config file?');		
 		}
 		

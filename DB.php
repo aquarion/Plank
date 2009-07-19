@@ -47,9 +47,16 @@ class Plank_DB {
         $connections = explode(',',$config['connections']);
         
     	foreach($connections as $connection){
+
+	
+
     		if (isset($config['dsn_'.$connection])){    
     			$this->connections[$connection] = MDB2::factory($config['dsn_'.$connection]);
-    			
+
+			if(PEAR::isError($this->connections[$connection])){
+				throw new Plank_Exception_Database('DB Error! '.$this->connections[$connection]->getMessage().' '.$this->connections[$connection]->getUserInfo());
+			}    			
+
     			if (SHOWDEBUG){
     				$this->connections[$connection]->setOption('debug', 1);
     				$this->connections[$connection]->setOption('log_line_break', "<br/>");
