@@ -61,23 +61,34 @@ class Plank_Error {
 		<table>
 			<tr><th>Function/Method</th><th>File</th><th>Line</th><th>Args</th></tr>';
 		
-		$sprintf = '<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="#" onClick="document.getElementById(\'%s\').style.display = \'block\'; this.style.display = \'none\'">Args</a><div id="%s" style="display: none;">%s</div></td></tr>';
+		$sprintf = '<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="#" onClick="document.getElementById(\'%s\').style.display = \'block\'; this.style.display = \'none\'">Args</a><pre id="%s" style="display: none;">%s</pre></td></tr>';
 		foreach($trace as $t){
 			$function = isset($t['class']) ?  $t['class']. $t['type']. $t['function'] : $t['function'];
 			
 			$id = uniqid();
 			
 			
-			//$file = str_replace(getcwd(), 'CWD', $t['file']);
-			$file = str_replace(realpath(CODE_PATH), '[APP]', $t['file']);
+			$file = $t['file'];
+			$file = str_replace(realpath(CODE_PATH), '[<acronym title="'.realpath(CODE_PATH).'">APP</acronym>]', $file);
+			$file = str_replace(realpath(PLANK_PATH), '[<acronym title="'.realpath(PLANK_PATH).'">PLK</acronym>]', $file);
+			$file = str_replace(getcwd(), 'CWD', $file);
 			
-			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, print_r($t['args'],1));
+			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, Plank_Error::var_dump_string($t['args'],1));
 			
 		}
 		
 		$output .= '</table>';
 
 		return $output;
+		
+	}
+	
+	function var_dump_string($thing){
+			ob_start();
+			var_dump($thing);
+			$content = ob_get_contents();
+			ob_end_clean();
+			return $content;
 		
 	}
 }

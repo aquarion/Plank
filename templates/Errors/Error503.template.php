@@ -50,6 +50,12 @@ p.smallprint {
 	padding-bottom: 10px;
 	text-align: center;
 }
+
+acronym {
+	cursor: help;
+	border-bottom: 1px dotted #840000;
+}
+
 </style>
 
 <div class="error">

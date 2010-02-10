@@ -8,14 +8,20 @@ class Plank_Collection  implements Iterator {
 	private $type = 'Objects';
 	private $sort = '';
 	
+	
+	private $position = 0;
+	
 	function __construct($array = false){
+        $this->position = 0;
 		if($array){
 			$this->collection = $array;
+		} else {
+			$this->collection = array();
 		}
 	}
 	
-	function __asString(){
-		return "A collection of ".count($this->collection)." $type things";
+	function __toString(){
+		return "A collection of ".count($this->collection)." ".$this->type." things";
 	}
 	
 	function setType($type){
@@ -38,7 +44,7 @@ class Plank_Collection  implements Iterator {
 		
 	
 		$array = $obj->_collection_find($field, $value, $op, $sort, $limit );
-		
+				
 		$collection = array();
 		foreach($array as $element){
 			$collection[] = new $type($element);
@@ -74,37 +80,37 @@ class Plank_Collection  implements Iterator {
 	
 	
 	// Iterators:
-
-    public function rewind() {
-        reset($this->collection);
+    function rewind() {
+        #var_dump(__METHOD__);
+        $this->position = 0;
     }
 
-    public function current() {
-        return current($this->collection);
-        
+    function current() {
+        #var_dump(__METHOD__);
+        return $this->collection[$this->position];
     }
 
-    public function key() {
-        return key($this->collection);
+    function key() {
+       # var_dump(__METHOD__);
+        return $this->position;
     }
 
-    public function next() {
-        return next($this->collection);
+    function next() {
+        #var_dump(__METHOD__);
+        ++$this->position;
     }
 
-    public function valid() {
-        $var = $this->current() !== false;
-        return $var;
+    function valid() {
+       # var_dump(__METHOD__);
+        return isset($this->collection[$this->position]);
     }
     
-    public function getid($id){
-    	return $this->collection[$id];
+    function add($that){
+    	$this->collection[] = $that;
     }
     
-   	public function add($object){
-   		if (get_class($object) != $this->type){
-   			throw new Plank_Exception(sprintf('Cannot add %s to collection of %ss', get_class($object), $this->type));
-   		}
-   	}
+    function remove($id){
+    	unset($this->collection[$id]);
+    }
 
 }

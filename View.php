@@ -38,8 +38,8 @@ class Plank_View {
 	
 	function render(){
 
-		if ($this->template === null){
-			throw new Plank_Exception_View('Template Not Set');			
+		if ($this->template === null){	
+			throw new Plank_Exception_View('Template Not Set');		
 		}
 		
 		else {
@@ -55,8 +55,12 @@ class Plank_View {
 	
 	function partial($templateDir, $template, $data = array(), $as_string = false){
 		
-		foreach($data as $index=>$value){
-			$this->$index = $value;
+		if(is_array($data)){
+			foreach($data as $index=>$value){
+				$this->$index = $value;
+			}
+		} elseif($data){
+			throw new Plank_Exception_View('Data isn\'t an array. Please send me an array, not a '.gettype($data).'');	
 		}
 		
 		$file = $this->findFile($templateDir, $template);

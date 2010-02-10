@@ -78,6 +78,33 @@ class Plank_DB {
     }
 	# End Singleton Zen
 	
+	function query($sql = null, $data = null, $cxn= null){
+		if(!$sql){
+			throw new Plank_Exception_Database("Query must be set");
+		}
+		if(!is_null($data) && !is_array($data)){
+			throw new Plank_Exception_Database("Data must be an array if it is set (Null otherwise)");
+		}
+		if(!$cxn){
+			throw new Plank_Exception_Database("Must select a connection");
+		}
+		
+		
+		$cxn = $this->connection($cxn);
+		$query = $cxn->prepare($sql, MDB2_PREPARE_MANIP);
+		if (PEAR::isError($query)) {
+		   throw new Plank_Exception_Database('Couldn\'t prepare statement: '. $query->getMessage());
+		}
+		$result = $query->execute($data);
+		
+		if (PEAR::isError($result)) {
+			Plank_Logger::log('DB', 'DB Error! '.$result->getMessage().' '.$result->getUserInfo(), L_FATAL);
+		   throw new Plank_Exception_Database('Database failed: '.$result->getMessage().'\n\n'.$result->getUserInfo());
+		}
+		
+		return $result;
+		
+	}
 	
 	static function connection($connection){
 		$db = Plank_DB::getInstance();

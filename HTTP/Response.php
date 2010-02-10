@@ -12,6 +12,8 @@ class Plank_HTTP_Response {
 	private $etag = '';
 	private $http_version = '1.1';
 	
+	public $location;
+	
 	
 	public function respond(){
 		header('HTTP '.$this->http_version.' '.$this->status_code.' '.$this->status_message);
@@ -75,6 +77,12 @@ class Plank_HTTP_Response {
 					';			
 				}
 				break;
+				
+			case '302':
+				if (!$this->location){
+					throw new Plank_Exception("Redirect requested, but no location specified");
+				}
+				header("Location: ".$this->location);
 		}
 		
 

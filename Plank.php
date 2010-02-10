@@ -74,16 +74,17 @@ try {
 	
 	define('INIT', time());
 
+Plank_Logger::logStat('Init', 'Finished init');
 	
 	new Plank_Site($request, &$response);
 	
+Plank_Logger::logStat('Init', 'Finished MVC');
 	
 } catch ( Plank_Exception_NotFound $e ){
 	Plank_Error::Error404($e->getMessage(), $response);	
 #} catch ( Exception $e ){
 #	Plank_Error::Error503($e, $response);	
 }
-
 
 $response->respond();
 

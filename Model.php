@@ -107,6 +107,16 @@ abstract class Plank_Model{
 		
 	}
 	
+	function _validate($data){
+		foreach($data as $property => $value){
+			$validationFunction = 'validate'.ucwords($property);
+			if(method_exists($this, $validationFunction)){
+				$this->$validationFunction($value);
+			}
+		}
+		
+	}
+	
 	function _save($force = false){
 		
 		if (!$this->changed && !$force){
@@ -119,12 +129,7 @@ abstract class Plank_Model{
 
 
 		// Check everything's valid
-		foreach($this->data as $property => $value){
-			$validationFunction = 'validate'.ucwords($property);
-			if(method_exists($this, $validationFunction)){
-				$this->$validationFunction($value);
-			}
-		}
+		$this->_validate($this->data);
 	
 		// Initialise database connection		
 		$db = Plank_DB::getInstance();
