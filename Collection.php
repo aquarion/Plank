@@ -49,7 +49,7 @@ class Plank_Collection  implements Iterator {
 		foreach($array as $element){
 			$collection[] = new $type($element);
 		}
-				
+						
 		$collection = new Plank_Collection($collection);
 		$collection->setType($type);
 		return $collection;

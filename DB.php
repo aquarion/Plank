@@ -53,10 +53,10 @@ class Plank_DB {
     		if (isset($config['dsn_'.$connection])){    
     			$this->connections[$connection] = MDB2::factory($config['dsn_'.$connection]);
 
-			if(PEAR::isError($this->connections[$connection])){
-				throw new Plank_Exception_Database('DB Error! '.$this->connections[$connection]->getMessage().' '.$this->connections[$connection]->getUserInfo());
-			}    			
-
+				if(PEAR::isError($this->connections[$connection])){
+					throw new Plank_Exception_Database('DB Error! '.$this->connections[$connection]->getMessage().' '.$this->connections[$connection]->getUserInfo());
+				}    			
+	
     			if (SHOWDEBUG){
     				$this->connections[$connection]->setOption('debug', 1);
     				$this->connections[$connection]->setOption('log_line_break', "<br/>");
@@ -69,9 +69,9 @@ class Plank_DB {
 	    		if(PEAR::isError($this->connections[$connection])){
 	    			throw new Plank_Exception_Database_Connection('Error connecting '.$connection.': '.$this->connections[$connection]->getMessage().' '.$this->connections[$connection]->getUserInfo());
 	    		}
-		} else {
-			throw new Plank_Exception_Database_Config('No DSN for DB Connection '.$connection);
-		}
+			} else {
+				throw new Plank_Exception_Database_Config('No DSN for DB Connection '.$connection);
+			}
     	}
         
         

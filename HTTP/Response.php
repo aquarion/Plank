@@ -43,6 +43,12 @@ class Plank_HTTP_Response {
 		Plank_Logger::log('Response', 'Setting cookie '.$name.' to '.$value, L_TRACE);
 	}
 	
+	public function redirect($location){
+		$this->location = $location;
+		$this->setstatus(301);
+		$this->setcontent("301 to ".$location);
+	}
+	
 	public function setstatus($code){
 		$this->status_code = $code;
 		
@@ -79,6 +85,7 @@ class Plank_HTTP_Response {
 				break;
 				
 			case '302':
+			case '301':
 				if (!$this->location){
 					throw new Plank_Exception("Redirect requested, but no location specified");
 				}
