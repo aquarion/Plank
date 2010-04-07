@@ -1,9 +1,13 @@
-<head>
+<?PHP 
+
+$approot = realpath("../application");
+
+?><head>
 	<title>Plank Error</title>
 
 <style type="text/css">
 body {
-	font-family: "Trebuchet MS" sans-serif;
+	font-family: "Trebuchet MS", sans-serif;
 }
 
 .error h1 {
@@ -79,13 +83,44 @@ span.action {
 	
 	<h3>How we chose what to display:</h3>
 	
-	<p>Plank autoloads classes. This means the naming scheme's a bit important. The format of the classes is that it will turn all the underscores into slashes and look for a file there. So a class called <sample>Plank_Controller_Index</sample> will be in <sample>$APPROOT/Plank/Controller/Index.php</sample>
 	
-	<p>In the config file (<sample>$APPROOT/config.ini</sample>), you set an Application Prefix. For the sake of this, we'll pretend you've set it to "<span class="prefix">APP</span>". This means that the first thing the Site object will do is see if there's a class called "<span class="prefix">APP</span>_Routing" (Which you would place in <sample>$APPROOT/<span class="prefix">APP</span>/Routing.php</sample>). If it doesn't find one, it will use "Plank_Routing", the default file (That's probably what it's using now) (Note that this preserves case. You can't make the prefix <span class="prefix">APP</span> and then refer to App, though that will work if your development stack is on Windows)</p>
 	
-	<p>Plank_Routing's theory of the universe is that URLs are broken up as <sample>http://Sitename.tld/<span class="controller">mycontroller</span>/<span class="action">myaction</span>/otherstuff</sample>. It ignores <sample>otherstuff</sample> entirely, and attempts to load a class called <sample><span class="prefix">APP</span>_Controller_<span class="controller">mycontroller</span></sample>. If it can't do this on the FrontPage controller (Called "Index" by default (so <sample><span class="prefix">APP</span>_Controller_<span class="controller">Index</span></sample>) or setable in config.ini), it'll attempt to load the Plank index file you're looking at now. If it can't do this, or it's not on the front page it will 404.</p>
+	<p>Plank autoloads classes. This means the naming scheme's a bit important. The format of the classes is that it will turn all the underscores into slashes and look for a file there. So a class called <sample>Plank_Controller_Index</sample> will be in <sample><?PHP echo $approot; ?>/Plank/Controller/Index.php</sample>
 	
-	<p>If it succeeds, it will then attempt to call a method called <span class="action">myaction</span>Action on the controller. If you don't specify an action (so the URL is <sample>http://Sitename.tld/<span class="controller">mycontroller</span>/</sample>) that too will default to Index for the action, so it will look for <sample><span class="prefix">APP</span>_Controller_<span class="controller">mycontroller</span>-&gt;IndexAction().</sample></p>
+	<p>In the config file (<sample><?PHP echo $approot; ?>/config.ini</sample>), you set an Application Prefix. 
+	<?PHP 
+	if ($apprefix = $this->config->get('system', 'application_prefix')){
+		
+		$appmockery = strtolower($apprefix);
+		
+		if ($appmockery == $apprefix){
+			$appmockery = strtoupper($apprefix);
+		}
+		
+		?>
+			<p>You've set this to <span class="prefix"><?PHP echo $apprefix?></span>.</p>
+		<?PHP
+	} else {
+		$apprefix = "APP";
+	?>	
+		For the sake of this, we'll pretend you've set it to "<span class="prefix"><?PHP echo $apprefix ?></span>". 
+		<?PHP
+	}
+	?>
+	
+	<p>This means that the first thing the Site object will do is see if there's a class called "<span class="prefix"><?PHP echo $apprefix ?></span>_Routing" (Which you would place in <sample><?PHP echo $approot; ?>/<span class="prefix"><?PHP echo $apprefix ?></span>/Routing.php</sample>). If it doesn't find one, it will use "Plank_Routing", the default file (That's probably what it's using now) (Note that this preserves case. You can't make the prefix <span class="prefix"><?PHP echo $apprefix ?></span> and then refer to "<?php echo $appmockery ?>", though that <em>might</em> work if your development stack is on Windows or some other crazy non-case sensitive sytem. Avoid trying it.)</p>
+
+	<p>This is generic across all of Plank. All local systems will look for <span class="prefix"><?PHP echo $apprefix ?></span>_$SYSTEMTHING followed by Plank_$SYSTEMTHING if that doesn't work. By these means you can pretty much override anything.</p>
+	
+	<h2>Routing</h2>
+	
+	<p>Plank_Routing's theory of the universe is that URLs are broken up as <sample>http://Sitename.tld/<span class="controller">mycontroller</span>/<span class="action">myaction</span>/otherstuff</sample>. It ignores <sample>otherstuff</sample> entirely, and attempts to load a class called <sample><span class="prefix"><?PHP echo $apprefix ?></span>_Controller_<span class="controller">mycontroller</span></sample>. If it can't do this on the FrontPage controller (Called "Index" by default (so <sample><span class="prefix"><?PHP echo $apprefix ?></span>_Controller_<span class="controller">Index</span></sample>) or setable in config.ini), it'll attempt to load the Plank index file you're looking at now. If it can't do this, or it's not on the front page it will 404.</p>
+	
+	<p>If this doesn't suit your needs, create <span class="prefix"><?PHP echo $apprefix ?></span>_Routing and Plank will use that instead.</p>
+	
+	<h2>Controllers</h2>
+	
+	<p>If it succeeds, it will then attempt to call a method called <span class="action">myaction</span>Action on the controller. If you don't specify an action (so the URL is <sample>http://Sitename.tld/<span class="controller">mycontroller</span>/</sample>) that too will default to Index for the action, so it will look for <sample><span class="prefix"><?PHP echo $apprefix ?></span>_Controller_<span class="controller">mycontroller</span>-&gt;IndexAction().</sample></p>
 		
 	<p>When the controller is instantiated, it will be given a Request and a Response object. Very simply, the controller's job is to use what's in the Request object (which is everything sent to the server) to fill in the Response object. Mostly you'll do this by initialising a View and then rendering it into the <sample>$response-&gt;setContent()</sample> method. You're best off looking at how <sample>Plank_Controller_Index</sample> does that. It's not complicated, but I haven't finished writing the views system as I write this document, so anything said here is likely to be inaccuate :)</p>
 		

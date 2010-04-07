@@ -34,11 +34,14 @@ class Plank_Site {
 			Plank_Logger::log('Initialise', 'Loading '.$app_prefix.'_Site_Initialise', L_DEBUG);
 			$class = $app_prefix.'_Site_Initialise';	
 			$init = new $class($request, $response);
+		} else {
+			$init = new Plank_Site_Initialise($request, $response);
 		}
 		
+		if ($init){
+			$init->preroute();
+		}
 		
-		$init->preroute();
-				
 		if (Plank_Autoload::findClass($app_prefix.'_Site_Routing')) {
 			Plank_Logger::log('Router', 'Loading '.$app_prefix.'_Routing as a routing file', L_DEBUG);
 			$class_name = $app_prefix.'_Site_Routing';
@@ -72,6 +75,11 @@ class Plank_Site {
 		}
 		
 		$controller = new $controllername($request, $response);
+		
+		
+		if (! is_a($controller, "Plank_Controller")){
+			throw new Plank_Exception("$controllername must be a subclass of Plank_Controller");
+		}
 		
 		$init->gotcontroller($controller, $routing->action);
 		

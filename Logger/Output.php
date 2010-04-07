@@ -58,8 +58,17 @@ class Plank_Logger_Output {
     public function dumpLog(){
     	foreach($this->log as $logline){
     		//microtime, level, area, message
-    		printf($this->strf(), $logline[0]-T, $logline[3], $logline[1], $logline[2]);
-    		echo "\n";
+    		
+    		$message =  $logline[2];
+    		if (is_array($message)){
+    			foreach($message as $index => $item){
+    				printf($this->strf(), $logline[0]-T, $logline[3], $logline[1], $index." - ".$item);
+    				echo "\n";
+    			}
+    		} else {    		
+    			printf($this->strf(), $logline[0]-T, $logline[3], $logline[1], $message);
+    			echo "\n";
+			}
     	}    	
     }
     

@@ -1,8 +1,5 @@
 <?PHP
 
-
-
-
 class Plank_Error {
 	
 	
@@ -53,12 +50,16 @@ class Plank_Error {
 	function getBacktrace($trace = null){
 		
 		if (is_null($trace)){
+			echo "<p>(Trace generated from inside Exception handler)</p>";
 			$trace = debug_backtrace();
 		}
 		#$trace = array_slice($trace, 1);
 		
 		$output = '
-		<table>
+		
+		<p><span style="color: #CCC">ħ</span> stands for <q>'.realpath(CODE_PATH."../").'</q> in the below:</p>
+		
+		<table width="100%">
 			<tr><th>Function/Method</th><th>File</th><th>Line</th><th>Args</th></tr>';
 		
 		$sprintf = '<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="#" onClick="document.getElementById(\'%s\').style.display = \'block\'; this.style.display = \'none\'">Args</a><pre id="%s" style="display: none;">%s</pre></td></tr>';
@@ -67,12 +68,25 @@ class Plank_Error {
 			
 			$id = uniqid();
 			
-			
+			if (!defined("CODE_PATH")){
+				define("CODE_PATH", getcwd());
+			}
+			//$file = str_replace(getcwd(), 'CWD', $t['file']);
 			$file = $t['file'];
 			$file = str_replace(realpath(CODE_PATH), '[<acronym title="'.realpath(CODE_PATH).'">APP</acronym>]', $file);
 			$file = str_replace(realpath(PLANK_PATH), '[<acronym title="'.realpath(PLANK_PATH).'">PLK</acronym>]', $file);
 			$file = str_replace(getcwd(), 'CWD', $file);
 			
+			if(isset($t['file'])){
+				$file = str_replace(realpath(CODE_PATH."../"), '<span style="color: #CCC">ħ</span>', $t['file']);
+			} else {
+				$file = "-";
+			}
+			if(isset($t['line'])){
+				$line = $t['line'];
+			} else {
+				$line = "-";
+			}
 			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, Plank_Error::var_dump_string($t['args'],1));
 			
 		}

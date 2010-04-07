@@ -31,14 +31,14 @@ for the Zend similarity is that it means I can pull in bits of Zend for bits
 I don't want to write.)
 
 */
-
+header('Content-type: text/html; charset=UTF-8') ;
 ob_start();
 define('SHOWDEBUG', true);
 
 define('T', microtime(true));
 
 define('CODE_PATH', '../application/');
-define('PLANK_PATH', '../libraries/');
+define('PLANK_PATH', '../lib/');
 
 define('L_TRACE', 32);
 define('L_DEBUG', 16);
@@ -48,6 +48,11 @@ define('L_ERROR', 2);
 define('L_FATAL', 1);
 
 include(PLANK_PATH.'/Plank/Autoload.php');
+
+function __exception_handler($exception){
+	include(PLANK_PATH."/Plank/templates/Errors/Exception.template.php");
+}
+set_exception_handler("__exception_handler");
 
 function __autoload($class_name){
 	Plank_Autoload::loadClass($class_name);

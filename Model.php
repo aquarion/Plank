@@ -17,9 +17,13 @@ abstract class Plank_Model{
 	
 	protected $changed        = false;
 	
+	protected $loadedData     = false;
+	
+	protected $forceInsert    = false;
+	
 	function __construct($Id = null, $gameId = null){
 		if(!$this->_dbTable){
-			throw new Plank_Exception_Model('Model DB Table Undefined');
+			throw new Plank_Exception_Model('Model DB Table Undefined for '.get_class($this));
 		}
 		
 		if (is_array($Id)){
@@ -76,7 +80,7 @@ abstract class Plank_Model{
 		$query = $cxn->prepare($sql, MDB2_PREPARE_MANIP);
 		
 		if (PEAR::isError($query)) {
-		   throw Plank_Excepion_Database('Couldn\'t prepare statement');
+		   throw new Plank_Exception_Database('Couldn\'t prepare statement: '.$query->getMessage());
 		}
 		
 		// Fill in the data, and add SecondaryID if we're using it.
@@ -97,6 +101,15 @@ abstract class Plank_Model{
 		if(!$row){
 			throw new Plank_Exception_Database_Notfound('Didn\'t have anything with that ID');
 		}
+		
+		$fields = explode(',', $this->_dbSaveFields);
+		$types = explode(',',$this->_dbSaveTypes);
+		foreach($types as $index => $type){
+			if ($type == "array"){
+				$row[$fields[$index]] = unserialize($row[$fields[$index]]);
+			}
+		}
+		
 		$this->_dbOrigData = $this->data = $row;
 		
 		
@@ -105,6 +118,12 @@ abstract class Plank_Model{
 			throw new Plank_Exception_Database('Load From ID was insufficently unique');
 		}
 		
+		$this->loadedData = true;
+		
+	}
+	
+	function loadedData(){
+		return $this->loadedData;
 	}
 	
 	function _validate($data){
@@ -140,20 +159,26 @@ abstract class Plank_Model{
 				
 		$fields_values = array();
 		$fields = explode(',', $this->_dbSaveFields);
-		foreach($fields as $field){
-			$fields_values[$field] = $this->data[$field];
-		}
 		$types = explode(',',$this->_dbSaveTypes);
+		
+		foreach($fields as $index => $field){
+			if ($types[$index] == "array"){
+				$types[$index] = "text";
+				$fields_values[$field] = serialize($this->data[$field]);
+			} else {
+				$fields_values[$field] = $this->data[$field];
+			}
+		}
 		
 		$cxn->loadModule('Extended');
 		
 		
 		
-		if ($this->data[$this->_dbNumId] == 0){
+		if ($this->data[$this->_dbNumId] == 0 || $this->forceInsert){
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Saving new record ', L_DEBUG);
 			$result = $cxn->extended->autoExecute($this->_dbTable, $fields_values,
                         MDB2_AUTOQUERY_INSERT, null, $types);
-			if(!PEAR::isError($result)){
+			if(!PEAR::isError($result) && !$this->_dbNumId){
 				$this->data[$this->_dbNumId] = $cxn->lastInsertID();
 			}
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Saved new record ID '.$this->data[$this->_dbNumId], L_DEBUG);

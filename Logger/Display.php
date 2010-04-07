@@ -43,6 +43,7 @@ class Plank_Logger_Display {
 			border: 1px solid #840000;	
 			-moz-border-radius: 15px 0 15px 30px;
 			-webkit-border-radius: 30px 60px 30px 60px;
+			
 
 			
 			padding-left: .5em;
@@ -57,6 +58,9 @@ class Plank_Logger_Display {
 	
 		#plankDebugPane div.logView {
 			padding-bottom: 1em;
+			overflow: auto;
+			max-width: 100%;
+			width: 1024px;
 		}
 		
 		.plankLogo {
@@ -84,7 +88,14 @@ echo '
 
 	$out .= '<div id="plankDebugLogs" class="logView" style="display: none"><h2>Logs</h2>';
 	foreach($log as $logline){
-		$out .= sprintf($strf, $logline[0]-T, $logline[3], $logline[1], $logline[2]);
+		if (is_array($logline[2])){
+			foreach($logline[2] as $index => $item){
+				$out .= sprintf($strf, $logline[0]-T, $logline[3], $logline[1], "<tt>[$index]</tt>".$item);
+			}
+			
+		} else {
+			$out .= sprintf($strf, $logline[0]-T, $logline[3], $logline[1], $logline[2]);
+		}
 	}
 	$out .= "\n</div>";
 	$out .= '<div id="plankDebugQueries" class="logView" style="display: none"><h2>Queries</h2>';
@@ -105,7 +116,15 @@ echo '
 	$out .= '<div id="plankDebugStats" class="logView" style="display: none"><h2>Stats</h2>';
 	
 	foreach($stats as $logline){
-		$out .= sprintf('[%2.5f][%s] %s<br/>', $logline[0]-T, $logline[1], $logline[2]);
+    	$message =  $logline[2];
+		if (is_array($message)){
+			foreach($message as $index => $item){
+				$out .= sprintf('[%2.5f][%s] %s<br/>', $logline[0]-T, $logline[1], $index." - ".$item);
+			}
+		} else {    		
+			$out .= sprintf('[%2.5f][%s] %s<br/>', $logline[0]-T, $logline[1], $logline[2]);
+		}
+		
 	}
 	$out .= sprintf('( %2.5f total)', microtime(true)-T ) ;
 	$out .= "\n</div>";

@@ -3,7 +3,7 @@
 
 class Plank_Controller {
 	
-	function __construct($request, $response){
+	function __construct(Plank_HTTP_Request $request, Plank_HTTP_Response $response){
 		$this->request = $request;
 		$this->response = $response;
 	}
