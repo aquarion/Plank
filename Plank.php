@@ -38,7 +38,7 @@ define('SHOWDEBUG', true);
 define('T', microtime(true));
 
 define('CODE_PATH', '../application/');
-define('PLANK_PATH', '../lib/');
+define('PLANK_PATH', '../libraries/');
 
 define('L_TRACE', 32);
 define('L_DEBUG', 16);
