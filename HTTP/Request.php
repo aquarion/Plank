@@ -26,8 +26,9 @@ class Plank_HTTP_Request {
 		$this->user_agent       = @$_SERVER['HTTP_USER_AGENT'];
 		$this->accept_content   = explode(',', $_SERVER['HTTP_ACCEPT']);
 		$this->accept_languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-		$this->accept_charset   = explode(',', $_SERVER['HTTP_ACCEPT_CHARSET']);
-		
+		if(isset($_SERVER['HTTP_ACCEPT_CHARSET'])){
+			$this->accept_charset   = explode(',', $_SERVER['HTTP_ACCEPT_CHARSET']);
+		}
 		$this->keep_alive       = @$_SERVER['HTTP_KEEP_ALIVE'];
 		$this->connection       = @$_SERVER['HTTP_CONNECTION'];
 		
@@ -36,12 +37,31 @@ class Plank_HTTP_Request {
 		$this->uri              = @$_SERVER['REQUEST_URI'];
 		
 		foreach((array) $this->post as $index => $value){
-			$this->post->$index = stripslashes($value);
+			if(is_string($value)){
+				$this->post->$index = stripslashes($value);
+			}
 		}
 		foreach((array) $this->get as $index => $value){
-			$this->get->$index = stripslashes($value);
+			if(is_string($value)){
+				$this->get->$index = stripslashes($value);
+			}
 		}
 
+
+		$uri = trim($this->uri,'/');
+		
+		if(strpos($uri, '?') !== false){
+			Plank_Logger::log('Routing', 'A Query String', L_INFO);
+			list($uri, $query) = explode('?', $uri);
+		}
+		
+		$path = explode('/',rtrim($uri));
+				
+		if (isset($path[0]) && empty($path[0])){
+			array_pop($path);
+		}
+
+		$this->path = $path;
 		
 	}	
 	
