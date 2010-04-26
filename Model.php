@@ -115,7 +115,7 @@ abstract class Plank_Model{
 		
 		// If more than one row came back, we've fucked up.
 		if ($result->fetchRow()){
-			throw new Plank_Exception_Database('Load From ID was insufficently unique');
+			throw new Plank_Exception_Database(sprintf('Load From ID was insufficently unique (Found %d)', $result->numRows()));
 		}
 		
 		$this->loadedData = true;
@@ -161,6 +161,12 @@ abstract class Plank_Model{
 		$fields = explode(',', $this->_dbSaveFields);
 		$types = explode(',',$this->_dbSaveTypes);
 		
+		if (count($types) != count($fields)){
+			$err = sprintf("%s has %d fields defined, and types for %d of them.", 
+				$this->_dbTable, count($fields), count($types));
+			throw new Plank_Exception($err);
+		}
+		
 		foreach($fields as $index => $field){
 			if ($types[$index] == "array"){
 				$types[$index] = "text";
@@ -178,9 +184,17 @@ abstract class Plank_Model{
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Saving new record ', L_DEBUG);
 			$result = $cxn->extended->autoExecute($this->_dbTable, $fields_values,
                         MDB2_AUTOQUERY_INSERT, null, $types);
-			if(!PEAR::isError($result) && !$this->_dbNumId){
+			if(!PEAR::isError($result) && !$this->data[$this->_dbNumId]){
 				$this->data[$this->_dbNumId] = $cxn->lastInsertID();
+			
+			} elseif (PEAR::isError($result)) {
+				Plank_Logger::log('MDL'.$this->_dbTable, 'DB Error! '
+						.$result->getMessage().' '
+						.$result->getUserInfo(), L_FATAL);
 			}
+			
+			Plank_Logger::log('MDL'.$this->_dbTable, 'Saved new record ID '.$this->_dbNumId, L_DEBUG);
+			
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Saved new record ID '.$this->data[$this->_dbNumId], L_DEBUG);
 		} else {
 			Plank_Logger::log('MDL'.$this->_dbTable, 'Updating record '.$this->data[$this->_dbNumId], L_DEBUG);
@@ -192,7 +206,7 @@ abstract class Plank_Model{
 		}
                         
 		if (PEAR::isError($result)) {
-			Plank_Logger::log('Session', 'DB Error! '
+			Plank_Logger::log('MDL'.$this->_dbTable, 'DB Error! '
 					.$result->getMessage().' '
 					.$result->getUserInfo(), L_FATAL);
 					
@@ -314,6 +328,14 @@ abstract class Plank_Model{
 		return $result->fetchAll();
 		
 	
+	}
+
+	function __set($index, $value){
+		if(property_exists($this, $index)){
+			$this->$index = $value;
+		} else {
+			throw new Plank_Exception("There is no property $index");
+		}
 	}
 	
 } 
