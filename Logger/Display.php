@@ -51,9 +51,9 @@ class Plank_Logger_Display {
 		
 		#plankDebugPane:hover {
 
-			opacity: .75;
-			filter: alpha(opacity=75);
-			-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=75)";
+			opacity: .85;
+			filter: alpha(opacity=85);
+			-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=85)";
 		}
 	
 		#plankDebugPane div.logView {
