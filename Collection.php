@@ -113,4 +113,8 @@ class Plank_Collection  implements Iterator {
     	unset($this->collection[$id]);
     }
 
+	function getid($id){
+        return $this->collection[$id];
+	}
+
 }
