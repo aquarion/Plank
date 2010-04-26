@@ -9,18 +9,7 @@ class Plank_Routing {
 
 	function __construct(Plank_HTTP_Request $request){
 	
-		$uri = trim($request->uri,'/');
-		
-		if(strpos($uri, '?') !== false){
-			Plank_Logger::log('Routing', 'A Query String', L_INFO);
-			list($uri, $query) = explode('?', $uri);
-		}
-		
-		$path = explode('/',rtrim($uri));
-				
-		if (isset($path[0]) && empty($path[0])){
-			array_pop($path);
-		}
+		$path = $request->path;
 				
 		switch (count($path)){
 			case 0:
