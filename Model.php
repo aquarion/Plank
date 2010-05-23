@@ -293,6 +293,29 @@ abstract class Plank_Model{
 		return $result->fetchAll();
 	}
 	
+
+	function plus($property, $amount){
+		$original = $this->get($property);
+		$newvalue = $original + $amount;
+		$this->set($property, $newvalue);
+	}
+	
+	function minus($property, $amount){
+		$original = $this->get($property);
+		$newvalue = $original - $amount;
+		$this->set($property, $newvalue);
+	}
+
+	function multiply($property, $amount){
+		$original = $this->get($property);
+		$newvalue = $original * $amount;
+		$this->set($property, $newvalue);
+	}
+	function divide($property, $amount){
+		$original = $this->get($property);
+		$newvalue = $original / $amount;
+		$this->set($property, $newvalue);
+	}
 	
 	// This should provide a straight list of objects as a recordset for use
 	// by the Collection object.
