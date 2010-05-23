@@ -5,7 +5,7 @@ class Plank_Logger_Display {
 	// Display Plank logging info
 	
 	function display(){
-		if(!defined('SHOWDEBUG')){return;}
+		if(!defined('SHOWDEBUG')|| !SHOWDEBUG){return;}
 		
 		$out = <<<EOW
 		
@@ -94,7 +94,7 @@ echo '
 			}
 			
 		} else {
-			$out .= sprintf($strf, $logline[0]-T, $logline[3], $logline[1], $logline[2]);
+			$out .= sprintf($strf, $logline[0]-T, $logline[3], $logline[1], htmlentities($logline[2]));
 		}
 	}
 	$out .= "\n</div>";
