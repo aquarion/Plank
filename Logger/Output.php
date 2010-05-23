@@ -25,7 +25,7 @@ class Plank_Logger_Output {
     private $stats = array();
     
     public $areamax = 0;
-    private $errorlevel = 32;
+    private $errorlevel = 15;
     
     
     public function strf(){
