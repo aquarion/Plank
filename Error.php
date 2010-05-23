@@ -3,7 +3,7 @@
 class Plank_Error {
 	
 	
-	static function __call($function, $message){
+	function __call($function, $message){
 		
 		Plank_Error::defaultError('503', $message, $response);
 	}
@@ -93,7 +93,12 @@ class Plank_Error {
 			} else {
 				$line = "-";
 			}
-			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, Plank_Error::var_dump_string($t['args'],1));
+			if(isset($t['args'])){
+				$args = Plank_Error::var_dump_string($t['args'],1);
+			} else {
+				$args = "[no arguments]";
+			}
+			$output .= sprintf($sprintf, $function, $file, $t['line'], $id, $id, $args);
 			
 		}
 		
