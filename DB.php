@@ -1,6 +1,9 @@
 <?PHP
 
-require_once 'MDB2.php';
+if (!include_once 'MDB2.php'){
+	Plank_Logger::log('DB', 'Couldn\'t load MDB2, search path:'.ini_get("include_path"), L_FATAL);
+	throw new Plank_Exception("MDB2 doesn't appear to be installed");
+}
 
 class Plank_DB {
 	
