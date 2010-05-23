@@ -1,4 +1,12 @@
-<head>
+<?php 
+if(defined("TEXTMODE")){
+	echo "\n\n";
+	echo strip_tags($exception->getMessage())."\n\nStack Trace follows:";
+	
+	var_dump($exception->getTrace());
+	die();
+}
+?><head>
 	<title>Plank Exception</title>
 
 <style type="text/css">
