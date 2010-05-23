@@ -40,6 +40,10 @@ define('T', microtime(true));
 define('CODE_PATH', '../application/');
 define('PLANK_PATH', '../libraries/');
 
+$searchpath = PLANK_PATH.":".PLANK_PATH."/pear/:".ini_get('include_path');
+ini_set('include_path',$searchpath);
+				
+
 define('L_TRACE', 32);
 define('L_DEBUG', 16);
 define('L_INFO', 8);
