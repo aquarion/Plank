@@ -43,7 +43,13 @@ class Plank_Error {
 		
 		$response->respond();
 		
-		echo Plank_Logger_Display::display();
+		if(defined("TEXTMODE")){
+			echo "Uh-Oh\n";
+			echo striptags($view->error);
+			die();
+		} else {		
+			echo Plank_Logger_Display::display();
+		}
 		
 	}
 	
